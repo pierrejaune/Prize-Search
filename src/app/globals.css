@@ -7,3 +7,29 @@
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.original-navy {
+  color: #10375c;
+}
+.original-yellow {
+  color: #f3c623;
+}
+.original-orange {
+  color: #eb8317;
+}
+.original-white {
+  color: #f4f6ff;
+}
+
+.original-bg-navy {
+  background-color: #10375c;
+}
+.original-bg-yellow {
+  background-color: #f3c623;
+}
+.original-bg-orange {
+  background-color: #eb8317;
+}
+.original-bg-white {
+  background-color: #f4f6ff;
+}
