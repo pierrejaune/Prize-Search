@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function Header() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,7 +21,7 @@ export function Header() {
   return (
     <header className='bg-blue-500 text-white p-4 flex flex-col sm:flex-row items-center justify-between'>
       <h1 className='text-2xl font-bold'>
-        <a href='/'>Prize Search</a>
+        <Link href='/'>Prize Search</Link>
       </h1>
       <div className='flex gap-2 mt-2 sm:mt-0'>
         <input

@@ -1,3 +1,5 @@
+'use server';
+
 import { Product } from '@/types';
 import { client } from '@/lib/microcms';
 
@@ -20,8 +22,8 @@ export async function getProducts(
     }
 
     const data = await client.get({ endpoint: 'products', queries });
-
-    return data.contents.map((product: any) => ({
+    // console.log(data);
+    return data.contents.map((product: Product) => ({
       ...product,
       deadline: product.deadline || null, // 期限がない場合は `null`
     })) as Product[];
