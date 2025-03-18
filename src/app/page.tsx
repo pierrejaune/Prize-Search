@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 type searchParams = {
   q?: string;
-  manufacturer?: string;
+  manufacture?: string;
   category?: string;
 };
 
@@ -17,12 +17,12 @@ export default async function Home({
   // *修正参考リンク：https://nextjs.org/docs/messages/sync-dynamic-apis
   const params = await searchParams; // searchParams を await する
   const query = params?.q ?? '';
-  const manufacturer = params?.manufacturer ?? '';
+  const manufacture = params?.manufacture ?? '';
   const category = params?.category ?? '';
 
-  const products: Product[] = await getProducts(query, manufacturer, category);
+  const products: Product[] = await getProducts(query, manufacture, category);
 
-  // 期限切れの商品を非表示
+  // 期限切れの景品を非表示
   const filteredProducts = products.filter(
     (product) => !product.deadline || new Date(product.deadline) >= new Date()
   );
@@ -33,26 +33,28 @@ export default async function Home({
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
-            <div key={product.id} className='p-4 border rounded shadow'>
-              <Link
-                href={`/${product.manufacture}/${product.product_code}`}
-                className='text-gray-600 hover:opacity-70'
-              >
+            <div
+              key={product.id}
+              className='p-4 border rounded shadow original-bg-white relative'
+            >
+              <Link href={`/${product.manufacture}/${product.product_code}`}>
                 <Image
                   src={product.image_url}
                   width={333}
                   height={160}
                   alt={product.name}
-                  className='mx-auto w-auto h-40 object-cover rounded'
+                  className='mx-auto w-auto h-40 object-cover rounded duration-200 hover:scale-110'
                 />
                 <h3 className='text-xl font-semibold'>{product.name}</h3>
-                <p className='text-sm text-gray-600'>{product.manufacture}</p>
-                <p className='cursor-pointer'>👍 {product.likes}</p>
+                <p className='text-sm'>{product.manufacture}</p>
+                <p className='cursor-pointer text-2xl absolute right-4 bottom-4 z-10 hover:opacity-90'>
+                  ❤️ {product.likes}
+                </p>
               </Link>
             </div>
           ))
         ) : (
-          <p className='text-gray-500'>該当する商品がありません。</p>
+          <p>該当する商品がありません。</p>
         )}
       </div>
     </div>

@@ -8,14 +8,13 @@ export type Product = {
   deadline?: string; // 期限日（YYYY-MM-DD 形式）
 };
 
-export type shops = {
+export type Shops = {
   id: string;
   name: string;
   shop_url: string;
 };
 
-export interface ProductDetail extends Product {
+export interface ProductDetailProps extends Product {
   description: string;
-  deadline: string;
-  shops: shops[];
+  shops: Shops[];
 }
