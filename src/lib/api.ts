@@ -20,7 +20,11 @@ export async function getProducts(
     }
 
     const data = await client.get({ endpoint: 'products', queries });
-    return data.contents as Product[];
+
+    return data.contents.map((product: any) => ({
+      ...product,
+      deadline: product.deadline || null, // 期限がない場合は `null`
+    })) as Product[];
   } catch (error) {
     console.error('データ取得に失敗しました', error);
     return [];
