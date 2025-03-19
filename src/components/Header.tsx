@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useUser } from '@/lib/userContext';
+import { logout } from '@/lib/auth';
 
 export function Header() {
   const pathname = usePathname();
   const [isHome, setIsHome] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
     setIsHome(pathname === '/');
@@ -70,6 +73,17 @@ export function Header() {
               検索
             </button>
           </div>
+        )}
+
+        {/* ログイン・ログアウトボタンを追加 */}
+        {user ? (
+          <button onClick={logout} className='bg-red-500 px-4 py-2 rounded'>
+            ログアウト
+          </button>
+        ) : (
+          <Link href='/login' className='bg-blue-500 px-4 py-2 rounded'>
+            ログイン
+          </Link>
         )}
       </div>
     </header>
