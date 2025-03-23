@@ -16,6 +16,7 @@ const noto = Noto_Sans({
 export const metadata: Metadata = {
   title: 'Prize Search',
   description: 'ゲームセンター景品検索アプリ',
+  robots: 'noindex, nofollow',
 };
 
 export default function RootLayout({

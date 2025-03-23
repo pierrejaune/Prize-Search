@@ -1,81 +1,99 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Database } from '@/lib/database.types';
-import { Session, AuthChangeEvent } from '@supabase/supabase-js';
 
-type UserProfile = Database['public']['Tables']['profiles']['Row'] & {
+type UserType = {
+  id: string;
+  username: string;
+  avatar_url: string | null;
   email: string;
-};
+} | null;
 
 type UserContextType = {
-  session: Session | null;
-  user: UserProfile | null;
+  user: UserType;
   loading: boolean;
+  fetchUser: () => Promise<void>;
 };
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType>({
+  user: null,
+  loading: true,
+  fetchUser: async () => {},
+});
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const supabase = createClient();
+  const [user, setUser] = useState<UserType>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const supabase = createClient();
+  const fetchUser = useCallback(async () => {
+    console.log('[fetchUser] Fetching user data...');
+    setLoading(true);
 
-    const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        setLoading(false);
-        return;
-      }
-
-      setSession(data.session);
-
-      if (data.session?.user) {
-        const { data: userData } = await supabase
-          .from('profiles')
-          .select('id, username, avatar_url, created_at') // email を除外
-          .eq('id', data.session.user.id)
-          .single();
-
-        setUser({
-          ...userData,
-          email: data.session.user.email, // session から email を追加
-        });
-      } else {
-        setUser(null);
-      }
-
+    // 🔹 確実に最新のセッションを取得
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession();
+    if (sessionError || !sessionData.session) {
+      console.error('[fetchUser] No active session found.');
+      setUser(null);
       setLoading(false);
-    };
+      return;
+    }
 
-    fetchUser();
+    const userId = sessionData.session.user.id;
+    const email = sessionData.session.user.email ?? '';
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, username, avatar_url')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !profile) {
+      console.error('[fetchUser] Profile fetch error:', profileError?.message);
+      setUser(null);
+    } else {
+      setUser({ ...profile, email });
+      console.log('[fetchUser] Profile data:', profile);
+    }
+
+    setLoading(false);
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchUser(); // 🔹 初回レンダリング時に確実に取得
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event: AuthChangeEvent, session: Session | null) => {
-        setSession(session);
-        if (!session) setUser(null);
-        else fetchUser();
+      (event, session) => {
+        console.log('[onAuthStateChange] Event:', event);
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          fetchUser();
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setLoading(false);
+        }
       }
     );
 
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchUser, supabase.auth]);
 
   return (
-    <UserContext.Provider value={{ session, user, loading }}>
+    <UserContext.Provider value={{ user, loading, fetchUser }}>
       {children}
     </UserContext.Provider>
   );
 }
 
 export function useUser() {
-  const context = useContext(UserContext);
-  if (!context) throw new Error('useUser must be used within a UserProvider');
-  return context;
+  return useContext(UserContext);
 }

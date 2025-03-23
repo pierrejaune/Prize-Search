@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useUser } from '@/lib/userContext';
-import { logout } from '@/lib/auth';
+import { LogoutButton } from './_auth/LogoutButton';
 
 export function Header() {
   const pathname = usePathname();
@@ -77,9 +77,7 @@ export function Header() {
 
         {/* ログイン・ログアウトボタンを追加 */}
         {user ? (
-          <button onClick={logout} className='bg-red-500 px-4 py-2 rounded'>
-            ログアウト
-          </button>
+          <LogoutButton />
         ) : (
           <Link href='/login' className='bg-blue-500 px-4 py-2 rounded'>
             ログイン

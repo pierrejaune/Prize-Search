@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/auth';
+import { useUser } from '@/lib/userContext'; // 追加
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { fetchUser } = useUser(); // 追加
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,7 +27,12 @@ export default function LoginPage() {
       setError(result.error);
     } else {
       setMessage(result.message ?? null);
-      router.push('/mypage'); // ログイン成功時にリダイレクト
+
+      // 🔹 ユーザー情報を確実に取得
+      await fetchUser();
+
+      // 🔹 `/mypage` にリダイレクト
+      router.push('/mypage');
     }
   }
 

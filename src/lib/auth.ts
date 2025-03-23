@@ -27,6 +27,13 @@ export async function signupUser(formData: FormData) {
   if (error) return { error: error.message };
   if (!data.user) return { error: 'ユーザー情報が取得できませんでした。' };
 
+  //* 修正: profiles テーブルに「新規ユーザー」を追加
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .insert({ id: data.user.id, username: '新規ユーザー' });
+
+  if (profileError) return { error: profileError.message };
+
   return { message: '登録が成功しました！ログインしてください。' };
 }
 
@@ -45,7 +52,4 @@ export async function loginUser(formData: FormData) {
   return { message: 'ログインに成功しました！' };
 }
 
-export async function logout() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-}
+//* 修正: `logout` 関数を削除（代わりに `LogoutButton.tsx` を使用）
