@@ -1,3 +1,4 @@
+import { UserProvider } from '@/lib/userContext';
 import type { Metadata } from 'next';
 import './globals.css';
 import { Noto_Sans } from 'next/font/google';
@@ -15,6 +16,7 @@ const noto = Noto_Sans({
 export const metadata: Metadata = {
   title: 'Prize Search',
   description: 'ゲームセンター景品検索アプリ',
+  robots: 'noindex, nofollow',
 };
 
 export default function RootLayout({
@@ -23,11 +25,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='ja'>
-      <body className={noto.variable}>
-        <Header />
-        <main className='container mx-auto p-4 original-navy'>{children}</main>
-      </body>
-    </html>
+    <UserProvider>
+      <html lang='ja'>
+        <body className={noto.variable}>
+          <Header />
+          <main className='container mx-auto p-4 original-navy'>
+            {children}
+          </main>
+        </body>
+      </html>
+    </UserProvider>
   );
 }
