@@ -34,21 +34,21 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = useCallback(async () => {
+    if (user) return; // 🔹 既にデータがある場合はスキップ
     console.log('[fetchUser] Fetching user data...');
     setLoading(true);
 
-    // 🔹 確実に最新のセッションを取得
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getSession();
-    if (sessionError || !sessionData.session) {
-      console.error('[fetchUser] No active session found.');
+    // 🔹 `getSession` は削除し、`getUser` のみ使用
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      console.log('[fetchUser] No active session found.');
       setUser(null);
       setLoading(false);
       return;
     }
 
-    const userId = sessionData.session.user.id;
-    const email = sessionData.session.user.email ?? '';
+    const userId = userData.user.id;
+    const email = userData.user.email ?? '';
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
@@ -65,27 +65,25 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
 
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, user]); // 🔹 `user` を依存に追加し、不要なリクエストを抑制
 
   useEffect(() => {
-    fetchUser(); // 🔹 初回レンダリング時に確実に取得
+    if (!user) fetchUser(); // 🔹 初回のみデータ取得
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('[onAuthStateChange] Event:', event);
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          fetchUser();
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setLoading(false);
-        }
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      console.log('[onAuthStateChange] Event:', event);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        fetchUser();
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setLoading(false);
       }
-    );
+    });
 
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [fetchUser, supabase.auth]);
+  }, [fetchUser, supabase.auth, user]);
 
   return (
     <UserContext.Provider value={{ user, loading, fetchUser }}>
