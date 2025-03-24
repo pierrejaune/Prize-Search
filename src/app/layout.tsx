@@ -29,9 +29,7 @@ export default function RootLayout({
       <html lang='ja'>
         <body className={noto.variable}>
           <Header />
-          <main className='container mx-auto p-4 original-navy'>
-            {children}
-          </main>
+          <main className='container mx-auto original-navy'>{children}</main>
         </body>
       </html>
     </UserProvider>

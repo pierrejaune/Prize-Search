@@ -20,12 +20,14 @@ type UserContextType = {
   user: UserType;
   loading: boolean;
   fetchUser: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 };
 
 const UserContext = createContext<UserContextType>({
   user: null,
   loading: true,
   fetchUser: async () => {},
+  refreshUser: async () => {},
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
@@ -34,14 +36,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = useCallback(async () => {
-    if (user) return; // 🔹 既にデータがある場合はスキップ
-    console.log('[fetchUser] Fetching user data...');
+    if (user) return;
     setLoading(true);
 
-    // 🔹 `getSession` は削除し、`getUser` のみ使用
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) {
-      console.log('[fetchUser] No active session found.');
       setUser(null);
       setLoading(false);
       return;
@@ -57,21 +56,35 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       .single();
 
     if (profileError || !profile) {
-      console.error('[fetchUser] Profile fetch error:', profileError?.message);
       setUser(null);
     } else {
-      setUser({ ...profile, email });
-      console.log('[fetchUser] Profile data:', profile);
+      let avatarUrl = profile.avatar_url;
+      const storageBaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/`;
+
+      // avatars/ が二重になっていないか確認して修正
+      if (avatarUrl) {
+        avatarUrl = avatarUrl.replace(/^avatars\/avatars\//, 'avatars/');
+        if (!avatarUrl.startsWith('http')) {
+          avatarUrl = `${storageBaseUrl}${avatarUrl}`;
+        }
+      }
+
+      console.log(`修正後のアバターURL: ${avatarUrl}`);
+      setUser({ ...profile, email, avatar_url: avatarUrl });
     }
 
     setLoading(false);
-  }, [supabase, user]); // 🔹 `user` を依存に追加し、不要なリクエストを抑制
+  }, [supabase, user]);
+
+  const refreshUser = async () => {
+    setUser(null);
+    await fetchUser();
+  };
 
   useEffect(() => {
-    if (!user) fetchUser(); // 🔹 初回のみデータ取得
+    if (!user) fetchUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      console.log('[onAuthStateChange] Event:', event);
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         fetchUser();
       } else if (event === 'SIGNED_OUT') {
@@ -86,7 +99,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [fetchUser, supabase.auth, user]);
 
   return (
-    <UserContext.Provider value={{ user, loading, fetchUser }}>
+    <UserContext.Provider value={{ user, loading, fetchUser, refreshUser }}>
       {children}
     </UserContext.Provider>
   );

@@ -77,11 +77,30 @@ export function Header() {
 
         {/* ログイン・ログアウトボタンを追加 */}
         {user ? (
-          <LogoutButton />
+          <>
+            <LogoutButton />
+            <Link
+              href='/mypage'
+              className='original-bg-orange px-4 py-2 rounded hover:opacity-70'
+            >
+              マイページ
+            </Link>
+          </>
         ) : (
-          <Link href='/login' className='bg-blue-500 px-4 py-2 rounded'>
-            ログイン
-          </Link>
+          <>
+            <Link
+              href='/signup'
+              className='original-bg-navy px-4 py-2 rounded hover:opacity-70'
+            >
+              サインアップ
+            </Link>
+            <Link
+              href='/login'
+              className='bg-blue-500 px-4 py-2 rounded hover:opacity-70'
+            >
+              ログイン
+            </Link>
+          </>
         )}
       </div>
     </header>
