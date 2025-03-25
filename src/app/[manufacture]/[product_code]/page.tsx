@@ -28,7 +28,7 @@ export default async function ProductDetail({ params }: DetailUrlParams) {
     : 'なし';
 
   return (
-    <div className='max-w-90 mx-auto p-4 mt-4'>
+    <div className='max-w-90 mx-auto p-6 mt-4'>
       <h1 className='text-5xl font-bold text-left mb-4 original-orange'>
         景品名：{product.name}
       </h1>

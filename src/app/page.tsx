@@ -28,7 +28,7 @@ export default async function Home({
   );
 
   return (
-    <div>
+    <div className='p-6'>
       <h2 className='text-3xl font-bold my-4'>景品一覧</h2>
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
         {filteredProducts.length > 0 ? (
