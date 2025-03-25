@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { toggleLike, checkUserLike } from '@/lib/supabase/actions';
 import { useUser } from '@/lib/userContext';
-import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import Link from 'next/link';
 
 interface LikeButtonProps {
@@ -42,8 +47,8 @@ export default function LikeButton({
   return (
     <>
       <button
-        className={`cursor-pointer text-2xl absolute right-4 bottom-4 z-10 hover:opacity-90 ${
-          liked ? 'like' : ''
+        className={`cursor-pointer text-3xl hover:text-red-500 ${
+          liked ? 'text-red-500' : ''
         }`}
         onClick={handleLike}
       >
@@ -53,8 +58,13 @@ export default function LikeButton({
       {/* ログインを促すモーダル */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className='max-w-md p-6 original-bg-white'>
-          <h3 className='text-lg font-bold'>ログインが必要です</h3>
+        <DialogContent
+          className='max-w-md p-6 bg-white'
+          aria-describedby='need-login-modal'
+        >
+          <DialogTitle className='text-lg font-bold'>
+            ログインが必要です
+          </DialogTitle>
           <p className='mt-2'>いいねをするにはログインしてください。</p>
           <div className='mt-4'>
             <Link href='/login' className='text-blue-500 hover:underline'>

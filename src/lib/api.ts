@@ -2,6 +2,40 @@
 
 import { Product, ProductDetailProps } from '@/types';
 import { client } from '@/lib/microcms';
+import { createClient } from '@/lib/supabase/server';
+
+// ログインユーザーのいいねした商品を取得
+export async function getLikedProducts(userId: string): Promise<Product[]> {
+  const supabase = await createClient();
+
+  // Supabase からユーザーがいいねした product_id を取得
+  const { data: likedProducts, error } = await supabase
+    .from('likes')
+    .select('product_id')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('いいねした商品の取得に失敗しました:', error.message);
+    return [];
+  }
+
+  const productIds = likedProducts.map((like) => like.product_id);
+
+  if (productIds.length === 0) return [];
+
+  // microCMS から該当する product_id の商品情報を取得
+  const queries = {
+    filters: productIds.map((id) => `id[equals]${id}`).join('[or]'),
+  };
+
+  try {
+    const data = await client.get({ endpoint: 'products', queries });
+    return data.contents as Product[];
+  } catch (error) {
+    console.error('microCMS からの商品取得に失敗しました', error);
+    return [];
+  }
+}
 
 export async function getProducts(
   q?: string,

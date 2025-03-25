@@ -29,6 +29,14 @@ export default function Sidebar() {
             パスワード変更
           </Link>
         </li>
+        <li>
+          <Link
+            href='/mypage/likes'
+            className='block px-4 py-2 rounded-lg hover:bg-gray-200'
+          >
+            お気に入り一覧
+          </Link>
+        </li>
       </ul>
     </aside>
   );
