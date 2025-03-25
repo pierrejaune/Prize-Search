@@ -27,14 +27,7 @@ export async function signupUser(formData: FormData) {
   if (error) return { error: error.message };
   if (!data.user) return { error: 'ユーザー情報が取得できませんでした。' };
 
-  //* 修正: profiles テーブルに「新規ユーザー」を追加
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .insert({ id: data.user.id, username: '新規ユーザー' });
-
-  if (profileError) return { error: profileError.message };
-
-  return { message: '登録が成功しました！ログインしてください。' };
+  return { message: '登録が成功しました！確認メールを確認してください。' };
 }
 
 export async function loginUser(formData: FormData) {

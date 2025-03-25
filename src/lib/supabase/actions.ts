@@ -18,7 +18,7 @@ export async function updateProfile({
   if (avatarFile) {
     const fileExt = avatarFile.name.split('.').pop();
     const fileName = `${user.data.user.id}.${fileExt}`;
-    const filePath = `avatars/${fileName}`;
+    const filePath = `${fileName}`;
 
     // 画像をアップロード
     const { error: uploadError } = await supabase.storage
@@ -43,16 +43,22 @@ export async function updateProfile({
   // 正しいストレージURLを返す
   return {
     avatarUrl: avatarUrl
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${avatarUrl}`
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${avatarUrl}`
       : null,
   };
 }
 
 export async function updateEmail(newEmail: string) {
+  // メールアドレス変更リクエストを送信
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ email: newEmail });
 
-  return { error: error?.message || null };
+  if (error) return { error: error.message };
+
+  return {
+    message:
+      'メールアドレス変更リクエストが送信されました。確認メールのリンクをクリックしてください。',
+  };
 }
 
 export async function updatePassword(

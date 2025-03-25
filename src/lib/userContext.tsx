@@ -63,7 +63,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
       // avatars/ が二重になっていないか確認して修正
       if (avatarUrl) {
-        avatarUrl = avatarUrl.replace(/^avatars\/avatars\//, 'avatars/');
+        avatarUrl = avatarUrl.replace('avatars/', '');
+        console.log(avatarUrl);
         if (!avatarUrl.startsWith('http')) {
           avatarUrl = `${storageBaseUrl}${avatarUrl}`;
         }

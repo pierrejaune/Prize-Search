@@ -51,3 +51,9 @@ EXECUTE FUNCTION public.handle_new_user();
 INSERT INTO profiles (id, username)
 SELECT id, '新規ユーザー' FROM auth.users
 WHERE id NOT IN (SELECT id FROM profiles);
+
+
+-- profiles テーブルに行を挿入できるようにする
+CREATE POLICY "Allow authenticated users to insert their own profile"
+ON profiles FOR INSERT
+WITH CHECK (auth.uid() = id);
