@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { getProducts } from '@/lib/api';
+import { getLikesCount } from '@/lib/supabase/actions';
 import { Product } from '@/types';
 import Image from 'next/image';
+import LikeButton from '@/components/LikeButton';
 
 type searchParams = {
   q?: string;
@@ -21,6 +23,7 @@ export default async function Home({
   const category = params?.category ?? '';
 
   const products: Product[] = await getProducts(query, manufacture, category);
+  const likesCount = await getLikesCount();
 
   // 期限切れの景品を非表示
   const filteredProducts = products.filter(
@@ -47,10 +50,11 @@ export default async function Home({
                 />
                 <h3 className='text-xl font-semibold'>{product.name}</h3>
                 <p className='text-sm'>{product.manufacture}</p>
-                <p className='cursor-pointer text-2xl absolute right-4 bottom-4 z-10 hover:opacity-90'>
-                  ❤️ {product.likes}
-                </p>
               </Link>
+              <LikeButton
+                productId={product.id}
+                initialLikesCount={likesCount[product.id] ?? 0}
+              />
             </div>
           ))
         ) : (

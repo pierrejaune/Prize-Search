@@ -42,9 +42,7 @@ export default async function ProductDetail({ params }: DetailUrlParams) {
         />
         <div className='text-md w-50 flex flex-col gap-6 original-navy'>
           <div className='mt-4 flex items-center gap-2'>
-            <button className='text-3xl hover:text-red-500'>
-              ❤️ {product.likes}
-            </button>
+            <button className='text-3xl hover:text-red-500'>❤️</button>
           </div>
           <p>
             <span className='font-bold pb-2'>景品詳細</span>

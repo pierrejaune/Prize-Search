@@ -80,3 +80,86 @@ export async function updatePassword(
 
   return { error: error?.message || null };
 }
+
+// いいねを追加または削除する関数
+export async function toggleLike(productId: string, userId: string) {
+  const supabase = await createClient();
+
+  // 既に「いいね」しているか確認
+  const { data: existingLike, error: fetchError } = await supabase
+    .from('likes')
+    .select('id')
+    .eq('product_id', productId)
+    .eq('user_id', userId)
+    .single();
+
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    return { error: 'データの取得に失敗しました。' };
+  }
+
+  if (existingLike) {
+    // 既に「いいね」している場合は削除
+    const { error: deleteError } = await supabase
+      .from('likes')
+      .delete()
+      .eq('id', existingLike.id);
+
+    if (deleteError) return { error: 'いいねの削除に失敗しました。' };
+
+    return { message: 'いいねを解除しました。' };
+  } else {
+    // まだ「いいね」していない場合は追加
+    const { error: insertError } = await supabase.from('likes').insert([
+      {
+        product_id: productId,
+        user_id: userId,
+      },
+    ]);
+
+    if (insertError) return { error: 'いいねの追加に失敗しました。' };
+
+    return { message: 'いいねしました！' };
+  }
+}
+
+// 各商品のいいね数を取得する関数
+export async function getLikesCount() {
+  const supabase = await createClient();
+
+  // `group` を使わず、手動で product_id ごとの集計を行う
+  const { data, error } = await supabase.from('likes').select('product_id');
+
+  if (error) {
+    console.error('いいね数の取得に失敗しました:', error.message);
+    return {};
+  }
+
+  // 型を明示的に指定し、エラーを防ぐ
+  const likeCounts: Record<string, number> = {};
+  (data as { product_id: string }[]).forEach((item) => {
+    likeCounts[item.product_id] = (likeCounts[item.product_id] || 0) + 1;
+  });
+
+  return likeCounts;
+}
+
+// 指定した商品がユーザーにいいねされているかを確認する関数
+export async function checkUserLike(productId: string, userId?: string) {
+  if (!userId) return false; // ユーザー未ログイン時は false を返す
+
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('likes')
+    .select('id')
+    .eq('product_id', productId)
+    .eq('user_id', userId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('ユーザーのいいね状況の取得に失敗しました:', error.message);
+    return false;
+  }
+
+  return !!data;
+}
