@@ -1,18 +1,20 @@
 import { fetchProductDetail } from '@/lib/api';
+import { getLikesCount } from '@/lib/supabase/actions';
 import { ProductDetailProps, Shops } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import LikeButton from '@/components/LikeButton';
 
 interface DetailUrlParams {
   params: Promise<{ manufacture: string; product_code: string }>;
 }
+
 export default async function ProductDetail({ params }: DetailUrlParams) {
   // 修正参考：https://zenn.dev/ojin/articles/9ba0f4f50994a7
   const urlParams = await params;
-  const { manufacture } = urlParams;
-  const { product_code } = urlParams;
+  const { manufacture, product_code } = urlParams;
   const product: ProductDetailProps | null = await fetchProductDetail(
     manufacture,
     product_code
@@ -21,6 +23,9 @@ export default async function ProductDetail({ params }: DetailUrlParams) {
   if (!product) {
     return <p className='text-center mt-10'>商品が見つかりません。</p>;
   }
+
+  // いいね数を取得
+  const likesCount = await getLikesCount();
 
   // 期限日を "MM月dd日" の形式に変換
   const formattedDeadline = product.deadline
@@ -38,13 +43,14 @@ export default async function ProductDetail({ params }: DetailUrlParams) {
           alt={product.name}
           width={680}
           height={778}
-          className='w-50 h-auto  rounded'
+          className='w-50 h-auto rounded'
         />
         <div className='text-md w-50 flex flex-col gap-6 original-navy'>
           <div className='mt-4 flex items-center gap-2'>
-            <button className='text-3xl hover:text-red-500'>
-              ❤️ {product.likes}
-            </button>
+            <LikeButton
+              productId={product.id}
+              initialLikesCount={likesCount[product.id] ?? 0}
+            />
           </div>
           <p>
             <span className='font-bold pb-2'>景品詳細</span>
@@ -60,7 +66,6 @@ export default async function ProductDetail({ params }: DetailUrlParams) {
             下記ゲームセンターにあるのは
             <span className='font-bold'>{formattedDeadline}</span>
           </p>
-
           <div className='mt-4'>
             <h2 className='text-lg font-bold pb-2'>取り扱い店舗</h2>
             <ul className='list-disc list-inside'>
