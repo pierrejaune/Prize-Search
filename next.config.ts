@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   // runtime: 'edge', // ✅ Edge Runtime を明示的に指定
   env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_URL: process.env.SUPABASE_URL,
   },
   images: {
     remotePatterns: [

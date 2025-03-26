@@ -43,7 +43,7 @@ export async function updateProfile({
   // 正しいストレージURLを返す
   return {
     avatarUrl: avatarUrl
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${avatarUrl}`
+      ? `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/${avatarUrl}`
       : null,
   };
 }

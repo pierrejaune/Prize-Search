@@ -59,7 +59,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     } else {
       let avatarUrl = profile.avatar_url;
-      const storageBaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/`;
+      const storageBaseUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/avatars/`;
 
       // avatars/ が二重になっていないか確認して修正
       if (avatarUrl) {
