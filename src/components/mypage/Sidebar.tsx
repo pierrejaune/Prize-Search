@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function Sidebar() {
   return (
-    <aside className='w-1/4 p-6 original-bg-white original-navy h-100 border-r'>
-      <h2 className='text-xl font-bold mb-4'>マイページ</h2>
-      <ul className='space-y-2'>
+    <aside className='xl:w-1/4 lg:w-1/2 sm:w-full p-4 lg:p-6 original-bg-white original-navy h-100 border-r'>
+      <h2 className='font-bold mb-4 sm:text-base md:text-xl'>マイページ</h2>
+      <ul className='text-xs md:text-base grid sm:grid-cols-2 lg:grid-cols-1'>
         <li>
           <Link
             href='/mypage/'

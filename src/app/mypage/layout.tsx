@@ -2,8 +2,8 @@ import Sidebar from '@/components/mypage/Sidebar';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'マイページ',
-  description: 'ゲームセンター景品検索アプリ',
+  title: 'マイページ | プロフィール | Prize Search',
+  description: 'プロフィール更新ページ',
   robots: 'noindex, nofollow',
 };
 
@@ -13,9 +13,9 @@ export default function MyPageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className='flex min-h-screen justify-between'>
+    <div className='lg:flex min-h-screen lg:justify-between'>
       <Sidebar />
-      <main className='w-3/4 p-6'>{children}</main>
+      <main className='lg:w-3/4 p-6 sm:w-full'>{children}</main>
     </div>
   );
 }

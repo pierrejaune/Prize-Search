@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 
 const signupSchema = z.object({
   email: z.string().email('無効なメールアドレスです'),
-  password: z.string().min(6, 'パスワードは6文字以上で入力してください'),
+  password: z.string().min(8, 'パスワードは8文字以上で入力してください'),
 });
 
 export async function signupUser(formData: FormData) {

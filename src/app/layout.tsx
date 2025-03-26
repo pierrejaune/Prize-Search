@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Noto_Sans } from 'next/font/google';
 import { Header } from '@/components/Header';
+import LoadingWrapper from '@/components/LoadingWrapper';
 
 const noto = Noto_Sans({
   subsets: ['latin'],
@@ -17,6 +18,10 @@ export const metadata: Metadata = {
   title: 'Prize Search',
   description: 'ゲームセンター景品検索アプリ',
   robots: 'noindex, nofollow',
+  icons: {
+    icon: '/favicon.ico', // ファビコン
+    // apple: '/apple-touch-icon.png', // iOS用
+  },
 };
 
 export default function RootLayout({
@@ -28,8 +33,10 @@ export default function RootLayout({
     <UserProvider>
       <html lang='ja'>
         <body className={noto.variable}>
-          <Header />
-          <main className='container mx-auto original-navy'>{children}</main>
+          <LoadingWrapper>
+            <Header />
+            <main className='container mx-auto original-navy'>{children}</main>
+          </LoadingWrapper>
         </body>
       </html>
     </UserProvider>

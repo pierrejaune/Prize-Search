@@ -37,7 +37,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='max-w-md mx-auto mt-10'>
+    <div className='max-w-md mx-auto mt-10 p-4'>
       <h1 className='text-2xl font-bold mb-4'>ログイン</h1>
       {error && <p className='text-red-500'>{error}</p>}
       {message && <p className='text-green-500'>{message}</p>}
@@ -63,7 +63,9 @@ export default function LoginPage() {
             {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
-        <Button type='submit'>ログイン</Button>
+        <Button className='original-bg-navy text-white' type='submit'>
+          ログイン
+        </Button>
       </form>
     </div>
   );

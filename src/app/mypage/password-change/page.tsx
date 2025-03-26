@@ -25,7 +25,8 @@ export default function PasswordChangePage() {
   };
 
   return (
-    <div className='max-w-md mx-auto space-y-4'>
+    <div className='max-w-md mx-auto space-y-4 p-4'>
+      <h2 className='text-xl font-bold mb-4'>パスワードの変更</h2>
       <div className='relative'>
         <Input
           type={showPassword ? 'text' : 'password'}
@@ -59,7 +60,7 @@ export default function PasswordChangePage() {
       {error && <p className='text-red-500'>{error}</p>}
       <Button
         onClick={handlePasswordChange}
-        className='original-bg-navy original-white rounded-md'
+        className='original-bg-navy original-white rounded-md mt-2'
       >
         変更
       </Button>

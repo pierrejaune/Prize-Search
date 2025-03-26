@@ -38,7 +38,7 @@ export default function EmailChangePage() {
 
   return (
     <div className='max-w-md mx-auto p-4'>
-      <h1 className='text-xl font-bold mb-4'>メールアドレスの変更</h1>
+      <h2 className='text-xl font-bold mb-4'>メールアドレスの変更</h2>
       <p className='mb-2'>現在のメールアドレス: {user?.email}</p>
       <input
         type='email'
@@ -49,7 +49,7 @@ export default function EmailChangePage() {
       />
       <button
         onClick={handleEmailChange}
-        className='w-full bg-blue-500 text-white p-2 rounded'
+        className='w-full original-bg-navy original-white rounded-md text-white p-2'
       >
         変更リクエストを送信
       </button>

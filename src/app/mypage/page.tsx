@@ -48,7 +48,7 @@ export default function MyPage() {
   return (
     <Card className='max-w-md mx-auto'>
       <CardHeader>
-        <CardTitle>プロフィール</CardTitle>
+        <CardTitle className='text-xl'>プロフィール</CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col items-center space-y-4'>
         <Avatar className='w-24 h-24'>
@@ -57,7 +57,7 @@ export default function MyPage() {
         </Avatar>
 
         <div className='w-full'>
-          <Label>ユーザー名</Label>
+          <Label className='mb-2'>ユーザー名</Label>
           <Input
             type='text'
             value={username}
@@ -67,7 +67,7 @@ export default function MyPage() {
         </div>
 
         <div className='w-full'>
-          <Label>アバター画像</Label>
+          <Label className='mb-2'>アバター画像</Label>
           <Input
             type='file'
             accept='image/png, image/jpeg, image/jpg'
@@ -78,7 +78,12 @@ export default function MyPage() {
         {error && <p className='text-red-500'>{error}</p>}
         {success && <p className='text-green-500'>{success}</p>}
 
-        <Button onClick={handleUpdate}>更新</Button>
+        <Button
+          onClick={handleUpdate}
+          className='original-bg-navy original-white rounded-md'
+        >
+          更新
+        </Button>
       </CardContent>
     </Card>
   );

@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Heart } from 'lucide-react';
 import Link from 'next/link';
 
 interface LikeButtonProps {
@@ -47,12 +48,13 @@ export default function LikeButton({
   return (
     <>
       <button
-        className={`cursor-pointer text-3xl hover:text-red-500 ${
-          liked ? 'text-red-500' : ''
+        className={`flex items-center cursor-pointer text-sm lg:text-2xl ${
+          liked ? 'original-yellow' : ''
         }`}
         onClick={handleLike}
       >
-        ❤️ {likesCount}
+        <Heart />
+        <span className='pl-2'>{likesCount}</span>
       </button>
 
       {/* ログインを促すモーダル */}
