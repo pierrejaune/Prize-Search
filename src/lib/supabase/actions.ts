@@ -85,40 +85,28 @@ export async function updatePassword(
 export async function toggleLike(productId: string, userId: string) {
   const supabase = await createClient();
 
-  // 既に「いいね」しているか確認
-  const { data: existingLike, error: fetchError } = await supabase
+  // いいね状態を反転する
+  const { error, data: existingLike } = await supabase
     .from('likes')
     .select('id')
     .eq('product_id', productId)
     .eq('user_id', userId)
     .single();
 
-  if (fetchError && fetchError.code !== 'PGRST116') {
+  if (error && error.code !== 'PGRST116') {
     return { error: 'データの取得に失敗しました。' };
   }
 
   if (existingLike) {
-    // 既に「いいね」している場合は削除
-    const { error: deleteError } = await supabase
-      .from('likes')
-      .delete()
-      .eq('id', existingLike.id);
-
-    if (deleteError) return { error: 'いいねの削除に失敗しました。' };
-
-    return { message: 'いいねを解除しました。' };
+    // いいね解除（即時反映）
+    await supabase.from('likes').delete().eq('id', existingLike.id);
+    return { liked: false };
   } else {
-    // まだ「いいね」していない場合は追加
-    const { error: insertError } = await supabase.from('likes').insert([
-      {
-        product_id: productId,
-        user_id: userId,
-      },
-    ]);
-
-    if (insertError) return { error: 'いいねの追加に失敗しました。' };
-
-    return { message: 'いいねしました！' };
+    // いいね追加（即時反映）
+    await supabase
+      .from('likes')
+      .insert([{ product_id: productId, user_id: userId }]);
+    return { liked: true };
   }
 }
 
