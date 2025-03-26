@@ -26,7 +26,8 @@ export default async function Home({
 
   const products: Product[] = await getProducts(query, manufacture, category);
   const likesCount = await getLikesCount();
-
+  // console.log(`productId2:${products[2].id}`);
+  // console.log(`likesCount:${likesCount[products[2].id]}`);
   // 期限切れの景品を非表示
   const filteredProducts = products.filter(
     (product) => !product.deadline || new Date(product.deadline) >= new Date()
