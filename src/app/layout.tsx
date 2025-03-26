@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Noto_Sans } from 'next/font/google';
 import { Header } from '@/components/Header';
-import LoadingWrapper from '@/components/LoadingWrapper';
+// import LoadingWrapper from '@/components/LoadingWrapper';
 
 const noto = Noto_Sans({
   subsets: ['latin'],
@@ -33,10 +33,10 @@ export default function RootLayout({
     <UserProvider>
       <html lang='ja'>
         <body className={noto.variable}>
-          <LoadingWrapper>
-            <Header />
-            <main className='container mx-auto original-navy'>{children}</main>
-          </LoadingWrapper>
+          {/* <LoadingWrapper> */}
+          <Header />
+          <main className='container mx-auto original-navy'>{children}</main>
+          {/* </LoadingWrapper> */}
         </body>
       </html>
     </UserProvider>
