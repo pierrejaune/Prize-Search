@@ -126,7 +126,7 @@ export async function toggleLike(productId: string, userId: string) {
 export async function getLikesCount() {
   const supabase = await createClient();
 
-  // `group` を使わず、手動で product_id ごとの集計を行う
+  // group を使わず、手動で product_id ごとの集計を行う
   const { data, error } = await supabase.from('likes').select('product_id');
 
   if (error) {
@@ -134,11 +134,20 @@ export async function getLikesCount() {
     return {};
   }
 
-  // 型を明示的に指定し、エラーを防ぐ
-  const likeCounts: Record<string, number> = {};
-  (data as { product_id: string }[]).forEach((item) => {
-    likeCounts[item.product_id] = (likeCounts[item.product_id] || 0) + 1;
-  });
+  // *reduce を使って集計処理を最適化
+  // { product_id: string }[]は　product_id を持つオブジェクトの 配列
+
+  // accumulator[item.product_id] || 0でaccumulatorにitem.product_id（現在のproduct_id）がすでに存在する→その現在の値を取得。存在しない場合（初めて出てきた場合）→0を代入（デフォルト値）
+  // +1でproduct_idの出現回数を1増やす
+  // accumulator[item.product_id]=(accumulator[item.product_id] || 0)+1;でproduct_idの出現回数を更新する
+  const likeCounts = (data as { product_id: string }[]).reduce(
+    (accumulator, item) => {
+      // すでにカウントされている場合は +1、そうでなければ 1 に初期化
+      accumulator[item.product_id] = (accumulator[item.product_id] || 0) + 1;
+      return accumulator; // 更新された集計データを返す
+    },
+    {} as Record<string, number> // 初期値は空のオブジェクト(product_id をキー、そのカウント数を値とするオブジェクト)
+  );
 
   return likeCounts;
 }
